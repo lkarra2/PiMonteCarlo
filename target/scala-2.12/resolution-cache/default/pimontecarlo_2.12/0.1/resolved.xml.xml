@@ -4,7 +4,7 @@
 		module="pimontecarlo_2.12"
 		revision="0.1"
 		status="integration"
-		publication="20180108165044"
+		publication="20180109000358"
 	>
 		<description>
 		PiMonteCarlo
@@ -35,5 +35,8 @@
 		<dependency org="org.scalanlp" name="breeze_2.12" rev="0.13" conf="compile->default(compile)"/>
 		<dependency org="org.scalanlp" name="breeze-natives_2.12" rev="0.13" conf="compile->default(compile)"/>
 		<dependency org="org.ddahl" name="rscala_2.12" rev="2.5.0" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-actor_2.12" rev="2.5.3" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-testkit_2.12" rev="2.5.3" conf="compile->default(compile)"/>
+		<dependency org="org.scalatest" name="scalatest_2.12" rev="3.0.1" conf="test->default(compile)"/>
 	</dependencies>
 </ivy-module>
