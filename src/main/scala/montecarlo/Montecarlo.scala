@@ -1,5 +1,5 @@
 //#full-example
-package com.lightbend.akka.sample
+package montecarlo
 
 /**
   * Author: LMK
