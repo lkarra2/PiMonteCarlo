@@ -10,6 +10,7 @@ import breeze.linalg._
 
 
 class Montecarlo {
+  //method to calculate and print value of pi
   def calc(): Unit = {
     val pInSq = 10000
 
@@ -30,7 +31,7 @@ class Montecarlo {
     println("Pi = " +pi)
   }
 
-  //Taken from GK
+  //method to check if point is within circle
   def pointWithinCircle(p:Vector[Double]): Boolean = {
     val x0 = 0.5
     val y0 = 0.5
@@ -44,6 +45,7 @@ class Montecarlo {
 }
 
 object Run extends Montecarlo {
+  //main method
   def main(args:Array[String]): Unit = {
     calc()
   }
