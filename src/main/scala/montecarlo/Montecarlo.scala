@@ -8,6 +8,7 @@ package montecarlo
 
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 import org.ddahl.rscala.RClient
+
 import scala.collection.mutable.ArrayBuffer
 import breeze.linalg._
 
@@ -16,8 +17,8 @@ object PiMonteCarlo {
   //#pimontecarlosimulator-messages
   def calc(message: String, printerActor: ActorRef): Props = Props(new PiMonteCarlo(message, printerActor))
   //#greeter-messages
-  final case class piValue()
-  case object CalcPi
+  final case class calculatePi()
+  case object SendPi
 }
 
 //#pimontecarlosimulator-actor
@@ -28,15 +29,15 @@ class PiMonteCarlo(message: String, printerActor: ActorRef) extends Actor {
   var currentPi: Float = 0
 
   def receive = {
-    case piValue() =>
+    case calculatePi() =>
       currentPi = calc()
-    case CalcPi           =>
+    case SendPi           =>
       //#pimontecarlosimulator-send-message
       printerActor ! PrintingPi(currentPi)
   }
 
   def calc(): Float = {
-    val pInSq = 10000
+    val pInSq = 1000
     val R = RClient()
     val points = new ArrayBuffer[Vector[Double]]
     for (a <- 1 to pInSq) {
@@ -72,10 +73,10 @@ object Printer {
 //#printer-actor
 class Printer extends Actor with ActorLogging {
   import Printer._
-
   def receive = {
-    case PrintingPi(pi) =>
-      log.info(s"Pi Value recieved (from ${sender()}): $pi")
+    case PrintingPi(pi) => {
+      log.info(s"Pi Value recieved (from ${sender()}): $pi");
+    }
   }
 }
 
@@ -91,25 +92,38 @@ object Montecarlo extends App {
   val printer: ActorRef = system.actorOf(Printer.props, "printerActor")
 
   // Create the 'pimontecarlosimulator' actors
-  val Actor1: ActorRef =
+  /*val Actor1: ActorRef =
     system.actorOf(PiMonteCarlo.calc("Actor1", printer), "Actor1")
   val Actor2: ActorRef =
     system.actorOf(PiMonteCarlo.calc("Actor2", printer), "Actor2")
   val Actor3: ActorRef =
-    system.actorOf(PiMonteCarlo.calc("Actor3", printer), "Actor3")
-  //#create-actors
+    system.actorOf(PiMonteCarlo.calc("Actor3", printer), "Actor3")*/
 
-  //#main-send-messages
-  Actor1 ! piValue()
-  Actor1 ! CalcPi
+  val actors = new ArrayBuffer[ActorRef]
+  for(i <- 1 to 100) {
+    actors += system.actorOf(PiMonteCarlo.calc(s"Actor$i", printer), s"Actor$i")
+  }
 
-  Actor1 ! piValue()
-  Actor1 ! CalcPi
+  val piAgregate = actors.map(x => calcAgregatePi(x))
 
-  Actor2 ! piValue()
-  Actor2 ! CalcPi
+  def calcAgregatePi(actor: ActorRef): Unit = {
+    val agregatePi: Float = 0
+    actor ! calculatePi()
+    actor ! SendPi
 
-  Actor3 ! piValue()
-  Actor3 ! CalcPi
+  }
+
+/*  //#main-send-messages
+  Actor1 ! calculatePi()
+  Actor1 ! SendPi
+
+  Actor1 ! calculatePi()
+  Actor1 ! SendPi
+
+  Actor2 ! calculatePi()
+  Actor2 ! SendPi
+
+  Actor3 ! calculatePi()
+  Actor3 ! SendPi*/
 
 }
